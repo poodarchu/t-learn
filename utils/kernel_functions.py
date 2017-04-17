@@ -38,7 +38,7 @@ def laplacian_kernel(sigma=1, **kwargs):
         return np.exp(- np.linalg.norm(x-y) / sigma)
     return f
 
-def rbf_kernel(gamma, **kwargs):
+def rbf_kernel(gamma=1, **kwargs):
     def f(x, y):
         return np.exp(- gamma * np.linalg.norm(x-y)**2)
     return f

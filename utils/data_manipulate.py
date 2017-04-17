@@ -55,7 +55,7 @@ def get_random_subset(X, y, n_subsets, replacements=True):
 
 # Normalize the data set X
 def normalize(X, axis=-1, order=2):
-    l2 = np.atleast_1d(np.linalg.norm(X, axis, order))
+    l2 = np.atleast_1d(np.linalg.norm(X, order, axis))
     l2[l2 == 0] = 1
 
     return X / np.expand_dims(l2, axis)

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from utils.data_manipulate import train_test_split, normalize
 from utils.data_operate import euclidean_distance, accuracy_score
 
-from unsupervised_learning import PCA
+from unsupervised_learning.PCA import PCA
 
 class kNN():
     def __init__(self, k=5):
