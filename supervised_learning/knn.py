@@ -18,7 +18,7 @@ class kNN():
         most_common = None
         # Count class occurrences among neighbors
         for c in np.unique(classes):
-            count = len(neighbors[neighbors[:-1] == c])
+            count = len(neighbors[neighbors[:, 1] == c])
             if count > max_count:
                 max_count = count
                 most_common = c
@@ -37,6 +37,7 @@ class kNN():
                 label = y_train[j]
                 # Add neighbor and its distance
                 neighbors.append([label, distance])
+            neighbors = np.array(neighbors)
             # Sort the list of observed samples from the lowest to highest distance
             # then select the first k elem
             k_nearest_neighbors = neighbors[neighbors[:, 1].argsort()][:self.k]
