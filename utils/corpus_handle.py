@@ -37,8 +37,27 @@ class FakeDict(object):
     def __str__(self):
         return "FakeDict(num_terms=%s" % self.num_terms
 
-    
+    def __getitem__(self, val):
+        if 0 <= val < self.num_terms:
+            return str(val)
+        raise ValueError("Internal id out of bounds (%s, expected <0..%s))" % (val, self.num_terms))
 
+    def iterate_items(self):
+        for i in range(self.num_terms):
+            yield i, str(i)
+
+    # Override the dict.keys() function, which is used to determine the maximum
+    # internal id of a corpus = the vocabulary dimensionality.
+    def keys(self):
+        return self.num_terms - 1
+
+    def __len__(self):
+        return self.num_terms
+
+    def get(self, val, default=None):
+        if 0 <= val < self.num_terms:
+            return str(val)
+        return default
 
 
 def dict_from_corpus(corpus):
