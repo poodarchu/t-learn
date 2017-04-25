@@ -1,8 +1,6 @@
-#ifndef GAMMA_H
-#define GAMMA_H
+#ifndef LDA_GAMMA_H_
+#define LDA_GAMMA_H_
 
-// Note that the functions Gamma and LogGamma are mutually dependent.
-double LogGamma(double);
-double Gamma(double);
+double lda_lgamma(double);
 
 #endif
