@@ -100,4 +100,4 @@ class AdditiveGaussianNoiseAutoEncoder(object):
     def getBias(self):
         return self.sess.run(self.weights['b1'])
 
-    
+# 
