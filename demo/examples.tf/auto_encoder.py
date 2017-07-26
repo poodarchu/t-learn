@@ -19,7 +19,11 @@ import sklearn.preprocessing as prep
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 
+# 如果深度学习模型的权重初始化得太小，那信号将在每层间传递时逐渐缩小而难以产生作用
+# 如果权重初始化得太大，那么信号将在每层间传递时逐渐方法并导致发散和失效
 # 使用 Xavier Initialization 作为参数初始化方法
+# Xaiver 初始化器做的事情是： 让深度学习模型的权重呗初始化得不大不小，正好合适。
+# 从数学的角度分析，Xaiver 就是让权重满足 0 均值，同时方差为 2/(n_in+n_out), 分布可以用均匀分布或者高斯分布。
 def xavier_init(fan_in, fan_out, constant=1):
     low = -constant * np.sqrt(6.0 / (fan_in + fan_out))
     high = -constant * np.sqrt(6.0 / (fan_in + fan_out))
@@ -82,6 +86,7 @@ class AdditiveGaussianNoiseAutoEncoder(object):
         return self.sess.run(self.cost, feed_dict={self.x: X, self.scale: self.training_scale})
 
     # 该函数用户返回自编码器隐含层的输出结果
+    # 他的目的是提供一个接口来获取抽象后的特征，自编码器的隐含层的最主要的功能就是学习出数据中的高阶特征
     def transform(self, X):
         return self.sess.run(self.hidden, feed_dict={self.x: X, self.scale: self.training_scale})
 
@@ -100,4 +105,45 @@ class AdditiveGaussianNoiseAutoEncoder(object):
     def getBias(self):
         return self.sess.run(self.weights['b1'])
 
-#
+# 读取数据集
+mnist = input_data.read_data.read_data_sets('MNIST_data', one_hot=True)
+
+def standard_scale(X_train, X_test):
+    preprocessor = prep.StandardScaler().fit(X_train)
+    X_train = preprocessor.transform(X_train)
+    X_test = preprocessor.transform(X_test)
+    return X_train, X_test
+
+def get_random_block_from_data(data, batch_size):
+    start_index = np.random.randint(0, len(data)-batch_size)
+    return data[start_index:(start_index+batch_size)]
+
+X_train, X_test = standard_scale(mnist.train.images, mnist.test.images)
+
+n_samples = int(mnits.train.num_examples)
+training_epochs = 20
+batch_size = 128
+display_step = 1 # 设置每隔一轮就显示一次 cost
+
+autoEncoder = AdditiveGaussianNoiseAutoEncoder(
+                n_input=784,
+                n_hidden=200,
+                transfer_function = tf.nn.softplus,
+                optimizer=tf.train。AdamOptimizer(learning_rate=0.001),
+                scale=0.01)
+
+for epoch in range(training_epochs):
+    avg_cost = 0.
+    total_batch = int(n_samples/batch_size)
+    for i in range(total_batch):
+        batch_xs = get_random_block_from_data(X_train, batch_size)
+        cost = autoEncoder.partial_fit(batch_xs)
+        avg_cost += cost/n_samples*batch_size
+    if epoch % display_step == 0:
+        print('Epoch: ', '%40d' %(epoch+1), 'cost=', '{:.9f}'.format(avg_cost))
+
+print("Total cost: " + str(autoEncoder.calc_total_cost(X_test)))
+
+
+
+
